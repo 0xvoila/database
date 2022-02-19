@@ -13,8 +13,13 @@ import java.util.ArrayList;
 public class Database {
     
     ArrayList<Table> tableList = new ArrayList<Table>();
+    String databaseName;
 
     public Database(ArrayList<Table> tableList) {
         this.tableList = tableList;
+    }
+    
+    public Database(String databaseName){
+        this.databaseName = databaseName;
     }
 }

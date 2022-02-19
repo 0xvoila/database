@@ -4,13 +4,14 @@
  */
 package com.amit.database;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author unbxd
  */
-public class Record {
+public class Record implements Serializable{
     
     ArrayList<Attribute> attributeList = new ArrayList<Attribute>();
 

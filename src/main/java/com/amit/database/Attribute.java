@@ -4,21 +4,23 @@
  */
 package com.amit.database;
 
+import java.io.Serializable;
+
 /**
  *
  * @author unbxd
  */
-public class Attribute<K, V> {
+public class Attribute<V> implements Serializable{
     
-    K key;
+    String key;
     V value;
     
-    public Attribute(K key, V value) {
+    public Attribute(String key, V value) {
         this.key = key;
         this.value = value;
     }
     
-    public V getValue(K key){
+    public V getValue(String key){
         return this.value;
     }
     
