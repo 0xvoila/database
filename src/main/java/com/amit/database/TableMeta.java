@@ -26,25 +26,32 @@ public class TableMeta implements Serializable{
     
     
     String nextRecordFile;
+    ArrayList<String> dbRecordFiles = new ArrayList<String>();
 
     public TableMeta(String tableName) {
         
         this.nextRecordFile = tableName;
+        this.dbRecordFiles.add(this.nextRecordFile);
     }
     
     public void readRecord(){
         
         try{
-            FileInputStream fileInputStream = new FileInputStream(this.nextRecordFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();  
             
-            for (Record record : arrRecord){
-                for ( Attribute attribute : record.attributeList){
-                    System.out.println(attribute.getValue(attribute.key));    
-                }
+            for (String file  : this.dbRecordFiles){
+                System.out.println(file);
+                FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();  
+            
+                for (Record record : arrRecord){
+                    for ( Attribute attribute : record.attributeList){
+                        System.out.println(attribute.getValue(attribute.key));    
+                        }
                 
+                }                
             }
+
         }
         catch(Exception exception){
             exception.printStackTrace();
@@ -66,7 +73,7 @@ public class TableMeta implements Serializable{
             }
             
             
-            if(size < 1000000 & size > 0){
+            if(size < 10 & size > 0){
                 
                 System.out.println("Records exists so far");
                 
@@ -75,8 +82,6 @@ public class TableMeta implements Serializable{
                 FileInputStream fileInputStream = new FileInputStream(this.nextRecordFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();    
-                
-              
                 
                 arrRecord.add(record);
                     
@@ -97,6 +102,8 @@ public class TableMeta implements Serializable{
                 
                 //Write to this file only 
                 ArrayList<Record> arrRecord = new ArrayList<>();
+                
+                arrRecord.add(record);
                 FileOutputStream fileOutputStream = new FileOutputStream(this.nextRecordFile);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 
@@ -112,13 +119,15 @@ public class TableMeta implements Serializable{
                 arrRecord.add(record);
                 
 //                Close this file and open new file and assign it to nextRecordFile
-                String[] x = this.nextRecordFile.split("_");
+                String[] x = this.nextRecordFile.split("-");
                 
                 if(x.length == 1){
-                    this.nextRecordFile = this.nextRecordFile +  "_" + "1";
+                    this.nextRecordFile = this.nextRecordFile +  "-" + "1";
+                    this.dbRecordFiles.add(this.nextRecordFile);
                 }
                 else{
-                    this.nextRecordFile = x[0] + "_" + Integer.toString(Integer.parseInt(x[1]) + 1);
+                    this.nextRecordFile = x[0] + "-" + Integer.toString(Integer.parseInt(x[1]) + 1);
+                    this.dbRecordFiles.add(this.nextRecordFile);
                 }
                 
                 //Write to this file only 
