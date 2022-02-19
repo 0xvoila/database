@@ -20,7 +20,11 @@ import java.util.ArrayList;
  */
 public class Database implements  Serializable{
     
-    ArrayList<Table> tableList = new ArrayList<Table>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	ArrayList<Table> tableList = new ArrayList<Table>();
     String databaseName;
     String databaseFile;
     
@@ -51,6 +55,7 @@ public class Database implements  Serializable{
                 FileInputStream fileInputStream = new FileInputStream(databaseFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
+                objectInputStream.close();
                 
                 for(Table table : arrTable){
                     
@@ -60,6 +65,8 @@ public class Database implements  Serializable{
                 }
                
             }
+            
+            
             
             newTable = new Table(tableName);
             tableList.add(newTable);

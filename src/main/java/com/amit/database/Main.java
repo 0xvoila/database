@@ -1,7 +1,9 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * 
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
+
 package com.amit.database;
 
 import java.io.FileInputStream;
@@ -19,7 +21,11 @@ import java.util.*;
  */
 public class Main implements Serializable{
    
-    String masterFile;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	String masterFile;
     ArrayList<Database> databaseList = new ArrayList<Database>();
         
     Main(){
@@ -35,10 +41,11 @@ public class Main implements Serializable{
         try{
 //            Database database = obj.createDatabase("my_db");    
             
-            Database database = obj.useDatabase("my_db");    
+            Database database = obj.createDatabase("my_db");    
             Table table = database.createTable("my_table");
             
             ArrayList<Attribute> attrList = new ArrayList<Attribute>();
+            
         
             Attribute<Integer> intAttribute = new Attribute<Integer>("id",5);
             attrList.add(intAttribute);
@@ -47,7 +54,7 @@ public class Main implements Serializable{
             attrList.add(stringAttribute);
                 
             Record record = new Record(attrList);          
-            table.addRecord(record);
+            table.writeRecord(record);
         
             attrList.clear();
             intAttribute = new Attribute<Integer>("id",10);
@@ -57,7 +64,7 @@ public class Main implements Serializable{
             attrList.add(stringAttribute);
         
             record = new Record(attrList);          
-            table.addRecord(record);
+            table.writeRecord(record);
         
             table.readRecord();
         }
@@ -101,6 +108,7 @@ public class Main implements Serializable{
                 FileInputStream fileInputStream = new FileInputStream(masterFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
+                objectInputStream.close();
                 
                 for(Database database : arrDatabase){
                     
@@ -146,6 +154,7 @@ public class Main implements Serializable{
                 FileInputStream fileInputStream = new FileInputStream(masterFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
+                objectInputStream.close();
                 
                 for(Database database : arrDatabase){
                     

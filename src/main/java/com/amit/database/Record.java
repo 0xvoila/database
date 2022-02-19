@@ -13,7 +13,11 @@ import java.util.*;
  */
 public class Record implements Serializable{
     
-    ArrayList<Attribute> attributeList = new ArrayList<Attribute>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	ArrayList<Attribute> attributeList = new ArrayList<Attribute>();
 
     public Record(ArrayList<Attribute> attributeList) {
         this.attributeList = attributeList;

@@ -12,7 +12,11 @@ import java.io.Serializable;
  */
 public class Attribute<V> implements Serializable{
     
-    String key;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	String key;
     V value;
     
     public Attribute(String key, V value) {
@@ -22,6 +26,7 @@ public class Attribute<V> implements Serializable{
     
     public V getValue(String key){
         return this.value;
+        
     }
     
 }
