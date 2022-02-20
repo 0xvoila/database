@@ -1,8 +1,3 @@
-/*
- * 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 
 package com.amit.database;
 
@@ -15,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+
 /**
  *
  * @author unbxd
@@ -41,29 +38,26 @@ public class Main implements Serializable{
         try{
 //            Database database = obj.createDatabase("my_db");    
             
-            Database database = obj.createDatabase("my_db");    
-            Table table = database.createTable("my_table");
+            Database database = obj.useDatabase("my_db");
             
-            ArrayList<Attribute> attrList = new ArrayList<Attribute>();
+//            Schema schema = new Schema();
+//            schema.addFieldSchema("id", "int", "false");
+//            schema.addFieldSchema("name", "string", "false");
             
-        
-            Attribute<Integer> intAttribute = new Attribute<Integer>("id",5);
-            attrList.add(intAttribute);
-        
-            Attribute<String> stringAttribute = new Attribute<String>("name","Amit Aggarwal");
-            attrList.add(stringAttribute);
-                
-            Record record = new Record(attrList);          
-            table.writeRecord(record);
-        
-            attrList.clear();
-            intAttribute = new Attribute<Integer>("id",10);
-            attrList.add(intAttribute);
-        
-            stringAttribute = new Attribute<String>("name","Deepak Aggarwal");
-            attrList.add(stringAttribute);
-        
-            record = new Record(attrList);          
+//            Table table = database.createTable("my_table",schema);
+            
+            Table table = database.useTable("my_table");
+            Schema schema = table.getSchema();
+            
+            HashMap<String, Object> x = new HashMap<String, Object>();
+//            x.put("id", 100);
+//            x.put("name", "Praveen Menon");
+//            Record record = schema.createRecord(x);                 
+//            table.writeRecord(record);
+//        
+            x.put("id", "1");
+            x.put("name", "Deepak Aggarwal");
+            Record record = schema.createRecord(x);
             table.writeRecord(record);
         
             table.readRecord();

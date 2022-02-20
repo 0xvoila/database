@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.amit.database;
 
 import java.io.FileInputStream;
@@ -33,7 +30,41 @@ public class Database implements  Serializable{
         this.databaseFile = databaseName;
     }
     
-    public Table createTable(String tableName) throws Exception{
+    public Table useTable(String tableName) throws Exception{
+    	
+        Path path = Paths.get(databaseFile);
+        long size = 0;
+        
+        if(Files.exists(path)){
+            size = Files.size(path);        
+        }
+        else{
+        	throw new Exception("Database files does not exists");   
+        }
+        
+        if(size > 0){
+            
+            FileInputStream fileInputStream = new FileInputStream(databaseFile);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
+            objectInputStream.close();
+            
+            for(Table table : arrTable){
+                
+                if(table.tableName.equals(tableName)){
+                	return table;
+                }
+            }
+            
+            throw new Exception("table does not exists");
+           
+        }
+        
+            
+        return null;
+    }
+    
+    public Table createTable(String tableName, Schema schema) throws Exception{
         
 //        First read the databaseFile and check if table already exists, if yes then throw error
 //        If table does not exists, then create the new table and append it to the list and serialize again
@@ -47,7 +78,7 @@ public class Database implements  Serializable{
                 size = Files.size(path);        
             }
             else{
-                path = Files.createFile(Paths.get(databaseFile));   
+            	path = Files.createFile(Paths.get(databaseFile));    
             }
             
             if(size > 0){
@@ -68,7 +99,7 @@ public class Database implements  Serializable{
             
             
             
-            newTable = new Table(tableName);
+            newTable = new Table(tableName, schema);
             tableList.add(newTable);
             
             FileOutputStream fileOutputStream = new FileOutputStream(this.databaseFile);

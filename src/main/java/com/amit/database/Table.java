@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyStore.Entry;
 import java.util.*;
 
 /**
@@ -21,20 +22,34 @@ import java.util.*;
  */
 public class Table implements Serializable{
     
-    
-    /**
-	 * 
-	 */
+ 
 	private static final long serialVersionUID = 1L;
 	String nextRecordFile;
 	String tableName;
     ArrayList<String> dbRecordFiles = new ArrayList<String>();
+    HashMap<String, Index> tableIndexMap = new HashMap<String, Index>();
+    Schema schema = null;   
 
-    public Table(String tableName) {
+    public Table(String tableName, Schema schema) throws Exception {
         
     	this.tableName = tableName;
         this.nextRecordFile = tableName;
         this.dbRecordFiles.add(this.nextRecordFile);
+        this.schema = schema;
+        
+        if(schema == null) {
+        	throw new Exception("Schema of the table can not be null");
+        }
+    }
+
+    public Schema getSchema() {
+    	return this.schema;
+    }
+    
+    public void createIndex(String fieldName) {
+    	
+    	Index index = new Index();
+    	this.tableIndexMap.put(fieldName, index);
     }
     
     public void readRecord(){
@@ -151,9 +166,5 @@ public class Table implements Serializable{
         
                     
     }
-    
-    
-    
-    
-    
+     
 }

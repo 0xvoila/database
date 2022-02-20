@@ -23,5 +23,16 @@ public class Record implements Serializable{
         this.attributeList = attributeList;
     }
     
-    
+    public Object getValue(String key) {
+    	
+    	Object value = null;
+    	for(Attribute attr: this.attributeList) {
+    		
+    		if ( attr.key.equals(key)) {
+    			value =  attr.value;
+    		}
+    	}
+    	
+    	return value;
+    }
 }
