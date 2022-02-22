@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.KeyStore.Entry;
 import java.util.*;
 
 /**
@@ -27,7 +26,8 @@ public class Table implements Serializable{
 	String nextRecordFile;
 	String tableName;
     ArrayList<String> dbRecordFiles = new ArrayList<String>();
-    HashMap<String, Index> tableIndexMap = new HashMap<String, Index>();
+    HashMap<String, StringIndex>  stringTableIndex = new HashMap<String, StringIndex>();
+    HashMap<String, IntegerIndex> integerTableIndex = new HashMap<String, IntegerIndex>() ;
     Schema schema = null;   
 
     public Table(String tableName, Schema schema) throws Exception {
@@ -41,15 +41,106 @@ public class Table implements Serializable{
         	throw new Exception("Schema of the table can not be null");
         }
     }
-
+    
     public Schema getSchema() {
     	return this.schema;
     }
     
-    public void createIndex(String fieldName) {
+    public void createIndex(String fieldName) throws Exception {
+    	    	
+//    	Check if field Type and create the index accordingly 
+    	HashMap<String, String> y = this.schema.getFieldSchema(fieldName);
     	
-    	Index index = new Index();
-    	this.tableIndexMap.put(fieldName, index);
+    	
+    	if(y == null) {
+    		throw new Exception("field does not exists on which index being created");
+    	}
+    	else {
+    		String type = y.get("type");
+    		
+    		if(type.equals("string")){
+    			
+    			if(stringTableIndex.get(fieldName) != null) {
+    				throw new Exception("Index already exists on field " +  fieldName); 
+    			}
+    			StringIndex stringIndex = new StringIndex();
+    			stringTableIndex.put(fieldName, stringIndex);
+    			populateStringIndex(stringIndex, fieldName);
+    			stringIndex.inOrder(stringIndex.rootNode);
+    			
+    		}
+    		else if(type.equals("int")) {
+    			
+    			if(stringTableIndex.get(fieldName) != null) {
+    				throw new Exception("Index already exists on field " +  fieldName); 
+    			}
+    			
+    			IntegerIndex integerIndex = new IntegerIndex();
+    			integerTableIndex.put(fieldName, integerIndex);
+    			populateIntegerIndex(integerIndex, fieldName);
+    			integerIndex.inOrder(integerIndex.rootNode);
+    		}
+    	}
+    	
+    	
+    	
+    }
+    
+    private void populateStringIndex(StringIndex stringIndex, String fieldName) {
+        
+    	try{
+            
+            for (String file  : this.dbRecordFiles){
+                FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
+                objectInputStream.close();
+            
+                for (Record record : arrRecord){
+                    for ( Attribute attribute : record.attributeList){
+                    		if(attribute.key.equals(fieldName)) {
+                    			stringIndex.rootNode = stringIndex.addNode(stringIndex.rootNode, (String)attribute.value, file);
+                    		}
+                    		
+                        }
+                
+                }                
+            }
+
+        }
+        catch(Exception exception){
+            exception.printStackTrace();
+        }    	
+    }
+    
+    private void populateIntegerIndex(IntegerIndex integerIndex, String fieldName) {
+    	
+    	try{
+            
+            for (String file  : this.dbRecordFiles){
+                FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
+                objectInputStream.close();
+            
+                for (Record record : arrRecord){
+                    for ( Attribute attribute : record.attributeList){
+                    		if(attribute.key.equals(fieldName)) {
+                    			integerIndex.rootNode = integerIndex.addNode(integerIndex.rootNode, (int)attribute.value, file);
+                    		}
+                    		
+                        }
+                
+                }                
+            }
+
+        }
+        catch(Exception exception){
+            exception.printStackTrace();
+        }
+    	
     }
     
     public void readRecord(){
@@ -57,15 +148,15 @@ public class Table implements Serializable{
         try{
             
             for (String file  : this.dbRecordFiles){
-                System.out.println(file);
                 FileInputStream fileInputStream = new FileInputStream(file);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
                 objectInputStream.close();
             
                 for (Record record : arrRecord){
                     for ( Attribute attribute : record.attributeList){
-                        System.out.println(attribute.getValue(attribute.key));    
+                            System.out.println(attribute.value);
                         }
                 
                 }                
@@ -100,7 +191,8 @@ public class Table implements Serializable{
                 
                 FileInputStream fileInputStream = new FileInputStream(this.nextRecordFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();    
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();    
                 objectInputStream.close();
                 arrRecord.add(record);
                     
@@ -131,9 +223,7 @@ public class Table implements Serializable{
                 fileOutputStream.close();
             }
             else{
-                
-                System.out.println("Creating new output file");
-                
+                   
                 ArrayList<Record> arrRecord = new ArrayList<>();
                 arrRecord.add(record);
                 

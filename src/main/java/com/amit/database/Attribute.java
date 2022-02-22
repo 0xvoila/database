@@ -10,21 +10,21 @@ import java.io.Serializable;
  *
  * @author unbxd
  */
-public class Attribute<V> implements Serializable{
+public class Attribute implements Serializable{
     
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	String key;
-    V value;
+    Object value;
     
-    public Attribute(String key, V value) {
+    public Attribute(String key, Object value) {
         this.key = key;
         this.value = value;
     }
     
-    public V getValue(String key){
+    public Object getValue(String key){
         return this.value;
         
     }

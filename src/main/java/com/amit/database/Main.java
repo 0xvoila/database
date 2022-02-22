@@ -36,31 +36,39 @@ public class Main implements Serializable{
         Main obj = new Main();
          
         try{
-//            Database database = obj.createDatabase("my_db");    
+            Database database = obj.createDatabase("my_db");    
             
-            Database database = obj.useDatabase("my_db");
+//            Database database = obj.useDatabase("my_db");
             
-//            Schema schema = new Schema();
-//            schema.addFieldSchema("id", "int", "false");
-//            schema.addFieldSchema("name", "string", "false");
+            Schema schema = new Schema();
+            schema.addFieldSchema("id", "int", "false");
+            schema.addFieldSchema("name", "string", "false");
             
-//            Table table = database.createTable("my_table",schema);
+            Table table = database.createTable("my_table",schema);
             
-            Table table = database.useTable("my_table");
-            Schema schema = table.getSchema();
+//            Table table = database.useTable("my_table");
+//            Schema schema = table.getSchema();
             
             HashMap<String, Object> x = new HashMap<String, Object>();
-//            x.put("id", 100);
-//            x.put("name", "Praveen Menon");
-//            Record record = schema.createRecord(x);                 
-//            table.writeRecord(record);
-//        
-            x.put("id", "1");
-            x.put("name", "Deepak Aggarwal");
-            Record record = schema.createRecord(x);
+            x.put("id", 1);
+            x.put("name", "DA");
+            Record record = schema.createRecord(x);                 
             table.writeRecord(record);
+//        
+            x.put("id", 2);
+            x.put("name", "XA");
+            record = schema.createRecord(x);
+            table.writeRecord(record);
+            
+            x.put("id", 3);
+            x.put("name", "DB");	
+            record = schema.createRecord(x);
+            table.writeRecord(record);
+            
+            table.createIndex("id");
+            table.createIndex("name");
         
-            table.readRecord();
+//            table.readRecord();
         }
         catch(Exception exception){
             System.out.println(exception.getMessage());
@@ -101,7 +109,8 @@ public class Main implements Serializable{
                 
                 FileInputStream fileInputStream = new FileInputStream(masterFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
+                @SuppressWarnings("unchecked")
+				ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
                 objectInputStream.close();
                 
                 for(Database database : arrDatabase){
@@ -126,7 +135,7 @@ public class Main implements Serializable{
         return null;
     }
     
-    public Database useDatabase(String databaseName){
+	public Database useDatabase(String databaseName){
         
         try{
             Path path = Paths.get(masterFile);
@@ -147,7 +156,8 @@ public class Main implements Serializable{
                 
                 FileInputStream fileInputStream = new FileInputStream(masterFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
+                @SuppressWarnings("unchecked")
+				ArrayList<Database> arrDatabase = (ArrayList<Database>)objectInputStream.readObject();        
                 objectInputStream.close();
                 
                 for(Database database : arrDatabase){

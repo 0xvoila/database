@@ -46,7 +46,8 @@ public class Database implements  Serializable{
             
             FileInputStream fileInputStream = new FileInputStream(databaseFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
+            @SuppressWarnings("unchecked")
+			ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
             objectInputStream.close();
             
             for(Table table : arrTable){
@@ -85,7 +86,8 @@ public class Database implements  Serializable{
                 
                 FileInputStream fileInputStream = new FileInputStream(databaseFile);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
+                @SuppressWarnings("unchecked")
+				ArrayList<Table> arrTable = (ArrayList<Table>)objectInputStream.readObject();        
                 objectInputStream.close();
                 
                 for(Table table : arrTable){

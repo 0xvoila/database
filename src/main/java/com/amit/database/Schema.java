@@ -1,16 +1,17 @@
 package com.amit.database;
 
 import java.io.Serializable;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.lang.model.element.Element;
 
 public class Schema implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	HashMap<String, HashMap<String, String>> schema = new HashMap<String, HashMap<String,String>>();
 	
 	public void addFieldSchema(String fieldName,  String fieldType, String nullable) {
@@ -44,14 +45,14 @@ public class Schema implements Serializable{
 				HashMap<String, String> y = schema.get(keyString);
 				
 				if(y.get("type").equals("int")) {
-					attrList.add(new Attribute<Integer>(keyString,(int)valObject));
+					attrList.add(new Attribute(keyString,(int)valObject));
 					
 				}
 				else if(y.get("type").equals("string")) {
-					attrList.add(new Attribute<String>(keyString,(String)valObject));
+					attrList.add(new Attribute(keyString,(String)valObject));
 				}
 				else if(y.get("type").equals("long")) {
-					attrList.add(new Attribute<Long>(keyString,(long)valObject));
+					attrList.add(new Attribute(keyString,(long)valObject));
 				}
 			}
 			else {
