@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 
 /**
@@ -48,6 +48,10 @@ public class Main implements Serializable{
         	while(true) {
         		
         		String command = scanner.nextLine();
+        		command = command.replaceAll("\s+", " ");
+        		command = command.replaceAll(",\s+", ",");
+        		
+        		System.out.println("Command is " + command );
         		
         		if(command.contains("use database")) {
         			
@@ -69,8 +73,14 @@ public class Main implements Serializable{
         		else if (command.contains("create table")){
        			 	
         			if(schema == null) {
-        				throw new Exception("please create the schema first by <create schema <fieldname> string/int");
+        				System.out.println("please create the schema first by <create schema <fieldname> string/int");
+        				continue;
         			}
+        			
+        			System.out.println("table name is " + command.split(" ")[2]);
+        			System.out.println("schema is " + schema.getFieldSchema("id"));
+        			System.out.println("schema is " + schema.getFieldSchema("name"));
+        			
         			table = database.createTable(command.split(" ")[2], schema);
         			
         			System.out.println("Created table " + command.split(" ")[2]);
@@ -78,7 +88,15 @@ public class Main implements Serializable{
         		
         		else if (command.contains("create schema")) {
         			schema = new Schema();
-        			schema.addFieldSchema(command.split(" ")[2], command.split(" ")[3], "false");
+        			String schemaString =  command.split(" ", 3)[2];
+        			System.out.println(schemaString);
+        					
+        			String[] keySchemaList = schemaString.split(",");
+        			
+        			for(String keySchema: keySchemaList) {
+        				
+        				schema.addFieldSchema(keySchema.split(" ")[0].replaceAll("\s+", "") , keySchema.split(" ")[1].replaceAll("\s+", ""), "false");	
+        			}
         			
         			System.out.println("Created schema for field " + command.split(" ")[2] + " of type " + command.split(" ")[3]);
         		}
@@ -98,12 +116,12 @@ public class Main implements Serializable{
         			
         			System.out.println("Inserting into table " + table.tableName + " from database " + database.databaseName);
         			
-        			String[] keyValueList = command.split(" ")[1].split(",");
+        			String[] keyValueList = command.split(" ",2)[1].split(",");
         			
         			HashMap<String, Object> x = new HashMap<String, Object>();
         			
         			for(String keyValue: keyValueList) {
-        				x.put(keyValue.split(" ")[0], keyValue.split(" ")[1]);
+        				x.put(keyValue.split(" ")[0].replaceAll("\s+", ""), keyValue.split(" ")[1].replaceAll("\s+", ""));
         			}
         			
         			Record record = schema.createRecord(x);                 
