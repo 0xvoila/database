@@ -19,6 +19,28 @@ public class StringIndex extends Index<String> {
 			return false;
 		}
 	}
+	
+	private String inOrderFilter(AVLNode rootNode, String key) {
+		
+		if(rootNode == null) {
+			return null;
+		}
+		
+		inOrderFilter(rootNode.leftNode, key);
+		
+		if(rootNode.equals(key)) {
+			return rootNode.recordFile;
+		}
+		inOrderFilter(rootNode.rightNode, key);
+		
+		
+		return null;
+	}
+	public String getByKey(String key) {
+		
+		return inOrderFilter(this.rootNode, key);
+		
+	}
 	    
     
 }

@@ -46,6 +46,94 @@ public class Table implements Serializable{
     	return this.schema;
     }
     
+    public Record query(String fieldName, Object key) throws Exception{
+    	
+    	Record returnRecord  = null;
+//    	Validate if fieldname has the existing index created 
+//    	Check if field Type and create the index accordingly 
+    	HashMap<String, String> y = this.schema.getFieldSchema(fieldName);
+    	
+    	
+    	if(y == null) {
+    		throw new Exception("field does not exists on which index being created");
+    	}
+    	else {
+    		String type = y.get("type");
+    		
+    		if(type.equals("string")) {
+    			StringIndex stringIndex = stringTableIndex.get(fieldName);
+    			String file = stringIndex.getByKey(key.toString());
+    			
+//    			Now open this file, get the record which is matching the kkey and return its value
+    			
+    			FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
+                objectInputStream.close();
+                
+                Boolean isFound = false;
+                
+                for (Record record : arrRecord){
+                    for ( Attribute attribute : record.attributeList){
+                    		if(attribute.key.equals(fieldName)) {
+                    			returnRecord =  record;
+                    			isFound = true;
+                    			break;
+                    		}
+                    		
+                        }
+                    
+                    if(isFound) break;
+                }
+                
+                
+    			return returnRecord;  
+    			
+    		}
+    		else if ( type.equals("int")) {
+    			
+    			IntegerIndex integerIndex = integerTableIndex.get(fieldName);
+    			String file = integerIndex.getByKey((int)key);
+    			
+//    			Now open this file, get the record which is matching the kkey and return its value
+    			
+    			FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                @SuppressWarnings("unchecked")
+				ArrayList<Record> arrRecord = (ArrayList<Record>)objectInputStream.readObject();
+                objectInputStream.close();
+                
+                Boolean isFound = false;
+                
+                for (Record record : arrRecord){
+                    for ( Attribute attribute : record.attributeList){
+                    		if(attribute.key.equals(fieldName)) {
+                    			returnRecord =  record;
+                    			isFound = true;
+                    			break;
+                    		}
+                    		
+                        }
+                    
+                    if(isFound) break;
+                }
+                
+                
+    			return returnRecord;
+    			
+    		}
+    	}
+    	
+    	
+    	return null;
+    }
+    
+    public ArrayList<Record> scan(String fieldName, Object value){
+    	
+    	return null;
+    }
+    
     public void createIndex(String fieldName) throws Exception {
     	    	
 //    	Check if field Type and create the index accordingly 

@@ -140,6 +140,8 @@ public abstract class Index<T>{
         inOrder(rootNode.rightNode);
     }
     
+    public abstract String getByKey(T key);
+    
     public void preOrder(AVLNode node){
         
         if(node == null){
