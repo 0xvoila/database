@@ -62,6 +62,11 @@ public class Table implements Serializable{
     		
     		if(type.equals("string")) {
     			StringIndex stringIndex = stringTableIndex.get(fieldName);
+    			
+    			if(stringIndex == null) {
+    				throw new Exception(" no index is created on the field " + fieldName);
+    			}
+    			
     			String file = stringIndex.getByKey(key.toString());
     			
 //    			Now open this file, get the record which is matching the kkey and return its value
@@ -94,7 +99,11 @@ public class Table implements Serializable{
     		else if ( type.equals("int")) {
     			
     			IntegerIndex integerIndex = integerTableIndex.get(fieldName);
-    			String file = integerIndex.getByKey((int)key);
+    			
+    			if(integerIndex == null) {
+    				throw new Exception(" no index is created on the field " + fieldName);
+    			}
+    			String file = integerIndex.getByKey(Integer.parseInt((String)key));
     			
 //    			Now open this file, get the record which is matching the kkey and return its value
     			

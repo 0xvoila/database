@@ -37,6 +37,7 @@ public class Main implements Serializable{
         
         
         Main obj = new Main();
+        
          
         try{
         	
@@ -44,6 +45,21 @@ public class Main implements Serializable{
         	Database database = null;
         	Table table = null;
         	Schema schema = null;
+        	
+//        	
+//        	while(true) {
+//        		String command = scanner.nextLine();
+//        		
+//        		System.out.println(command);
+//        		
+//        		String[] x = command.split(" ",2);
+//        		
+//        		System.out.println(x[0]);
+//        		System.out.println(x[1]);
+//        		
+//        	}
+        	
+        	
         	
         	while(true) {
         		
@@ -55,124 +71,202 @@ public class Main implements Serializable{
         		
         		if(command.contains("use database")) {
         			
-        			database = obj.useDatabase(command.split(" ")[2]);
-        			System.out.println("Using database " + command.split(" ")[2]);
+        			try {
+        				database = obj.useDatabase(command.split(" ")[2]);
+            			System.out.println("Using database " + command.split(" ")[2]);	
+        			}
+        			catch(Exception exception) {
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
+        			
         		}
         		else if (command.contains("create database")) {
-        			database = obj.createDatabase(command.split(" ")[2]);
         			
-        			System.out.println("Created database " + command.split(" ")[2]);
+        			try {
+        				database = obj.createDatabase(command.split(" ")[2]);
+            			System.out.println("Created database " + command.split(" ")[2]);	
+        			}
+        			catch (Exception exception) {
+						// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+					}
+        			
         		}
         		
         		else if (command.contains("use table")) {
         			
-        			 table = database.useTable(command.split(" ")[2]);
-        			 System.out.println("Using table " + command.split(" ")[2]);
+        			try {
+        				table = database.useTable(command.split(" ")[2]);
+           			 	System.out.println("Using table " + command.split(" ")[2]);	
+        			}
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
+        			 
         		}
         		
         		else if (command.contains("create table")){
        			 	
-        			if(schema == null) {
-        				System.out.println("please create the schema first by <create schema <fieldname> string/int");
+        			try {
+            			if(schema == null) {
+            				System.out.println("please create the schema first by <create schema <fieldname> string/int");
+            				continue;
+            			}
+            			
+            			System.out.println("table name is " + command.split(" ")[2]);
+            			System.out.println("schema is " + schema.getFieldSchema("id"));
+            			System.out.println("schema is " + schema.getFieldSchema("name"));
+            			
+            			table = database.createTable(command.split(" ")[2], schema);
+            			
+            			System.out.println("Created table " + command.split(" ")[2]);        				
+        			}
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
         				continue;
         			}
-        			
-        			System.out.println("table name is " + command.split(" ")[2]);
-        			System.out.println("schema is " + schema.getFieldSchema("id"));
-        			System.out.println("schema is " + schema.getFieldSchema("name"));
-        			
-        			table = database.createTable(command.split(" ")[2], schema);
-        			
-        			System.out.println("Created table " + command.split(" ")[2]);
+
         		}
         		
         		else if (command.contains("create schema")) {
-        			schema = new Schema();
-        			String schemaString =  command.split(" ", 3)[2];
-        			System.out.println(schemaString);
-        					
-        			String[] keySchemaList = schemaString.split(",");
         			
-        			for(String keySchema: keySchemaList) {
-        				
-        				schema.addFieldSchema(keySchema.split(" ")[0].replaceAll("\s+", "") , keySchema.split(" ")[1].replaceAll("\s+", ""), "false");	
+        			try {
+            			schema = new Schema();
+            			String schemaString =  command.split(" ", 3)[2];
+            			System.out.println(schemaString);
+            					
+            			String[] keySchemaList = schemaString.split(",");
+            			
+            			for(String keySchema: keySchemaList) {
+            				
+            				schema.addFieldSchema(keySchema.split(" ")[0].replaceAll("\s+", "") , keySchema.split(" ")[1].replaceAll("\s+", ""), "false");	
+            			}
+            			
+            			System.out.println("Created schema for field " + command.split(" ")[2] + " of type " + command.split(" ")[3]);        				
         			}
-        			
-        			System.out.println("Created schema for field " + command.split(" ")[2] + " of type " + command.split(" ")[3]);
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
         		}
         		
         		else if (command.contains("query")){
         			
-        			Record record = table.query(command.split(" ")[1], command.split(" ")[2]);
-        			
-        			System.out.println("Querying table " + table.tableName + " from database " + database.databaseName);
-        			
-        			for(Attribute attribute : record.attributeList) {
-        				System.out.print(attribute.key + " " + attribute.value);
+        			try {
+            			Record record = table.query(command.split(" ")[1], command.split(" ")[2]);
+            			
+            			System.out.println("Querying table " + table.tableName + " from database " + database.databaseName);
+            			
+            			for(Attribute attribute : record.attributeList) {
+            				System.out.print(attribute.key + " " + attribute.value);
+            			}        				
         			}
+        			
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
+        			
+
         		}
         		
         		else if (command.contains("insert")) {
         			
-        			System.out.println("Inserting into table " + table.tableName + " from database " + database.databaseName);
-        			
-        			String[] keyValueList = command.split(" ",2)[1].split(",");
-        			
-        			HashMap<String, Object> x = new HashMap<String, Object>();
-        			
-        			for(String keyValue: keyValueList) {
-        				x.put(keyValue.split(" ")[0].replaceAll("\s+", ""), keyValue.split(" ")[1].replaceAll("\s+", ""));
+        			try {
+            			System.out.println("Inserting into table " + table.tableName + " from database " + database.databaseName);
+            			
+            			String[] keyValueList = command.split(" ",2)[1].split(",");
+            			
+            			HashMap<String, Object> x = new HashMap<String, Object>();
+            			
+            			for(String keyValue: keyValueList) {
+            				
+            				String value = keyValue.split(" ",2)[1].replaceAll("\s+", "");
+            				Boolean isInt =  false, isLong = false, isFloat = false;
+            				
+            				try {
+            					x.put(keyValue.split(" ",2)[0].replaceAll("\s+", ""), Integer.parseInt(value));
+            					isInt = true;
+            				}
+            				catch (Exception e) {
+								// TODO: handle exception
+            					isInt = false;
+							}
+            				
+            				if(! isInt) {
+            					try {
+                					x.put(keyValue.split(" ",2)[0].replaceAll("\s+", ""), Long.parseLong(value));
+                					isLong = true;
+                				}
+                				
+                				catch(Exception exception) {
+                					isLong = false;
+                				}	
+            				}
+            				
+            				if (!isInt && !isLong) {
+                				try {
+                					x.put(keyValue.split(" ",2)[0].replaceAll("\s+", ""), Float.parseFloat(value));
+                					isFloat = true;
+                				}
+                				
+                				catch(Exception exception) {
+                					isFloat =  false;
+                				}            					
+            				}
+            				
+            				if(!isFloat && !isInt && !isLong) {
+            					try {
+                					x.put(keyValue.split(" ",2)[0].replaceAll("\s+", ""), value);
+                					isFloat = true;
+                				}
+                				
+                				catch(Exception exception) {
+                					isFloat =  false;
+                				}  
+            				}
+            				
+            			}
+            			
+            			System.out.println(x);
+            			Record record = schema.createRecord(x);                 
+            			table.writeRecord(record);        				
         			}
         			
-        			Record record = schema.createRecord(x);                 
-        			table.writeRecord(record);
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
+        			
+
         		
         		}
         		
         		else if (command.contains("create index")) {
         			
-        			System.out.println("Creating index into table " + table.tableName + " from database " + database.databaseName);
+        			try {
+            			System.out.println("Creating index into table " + table.tableName + " from database " + database.databaseName);
+            			
+            			table.createIndex(command.split(" ")[2]);        				
+        			}
+        			catch(Exception exception) {
+        				// TODO: handle exception
+        				System.out.println(exception.getMessage());
+        				continue;
+        			}
         			
-        			table.createIndex(command.split(" ")[0]);
+
         		}
         	}
-//            Database database = obj.createDatabase("my_db");    
-            
-            
-            
-//            Schema schema = new Schema();
-//            schema.addFieldSchema("id", "int", "false");
-//            schema.addFieldSchema("name", "string", "false");
-            
-//            Table table = database.useTable("my_table");
-//            
-//            Record record = table.query("id", 3);
-//            
-//            System.out.println(record);
-            
-//            Table table = database.useTable("my_table");
-//            Schema schema = table.getSchema();
-            
-//            HashMap<String, Object> x = new HashMap<String, Object>();
-////            x.put("id", 1);
-//            x.put("name", "DA");
-//            Record record = schema.createRecord(x);                 
-//            table.writeRecord(record);
-//        
-//            x.put("id", 2);
-//            x.put("name", "XA");
-//            record = schema.createRecord(x);
-//            table.writeRecord(record);
-            
-//            x.put("id", 3);
-//            x.put("name", "DB");	
-//            record = schema.createRecord(x);
-//            table.writeRecord(record);
-            
-//            table.createIndex("id");
-//            table.createIndex("name");
-        
-//            table.readRecord();
+
         }
         catch(Exception exception){
             System.out.println(exception.getMessage());
